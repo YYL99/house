@@ -67,7 +67,8 @@ ROBOTSTXT_OBEY = False
 ITEM_PIPELINES = {
    'house_transaction.pipelines.HouseTransactionPipeline': 1,
    'house_transaction.pipelines.JsonWithEncodingPipeline':2,
-   'house_transaction.pipelines.MysqlPipeline':3,
+   # 'house_transaction.pipelines.MysqlPipeline':3,
+   'house_transaction.pipelines.MysqlTwistedPipeline':4,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -90,3 +91,9 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+MYSQL_HOST = "localhost"
+MYSQL_DBNAME = "house_transaction"
+MYSQL_USER = "root"
+MYSQL_PASSWORD = "123456"
+
