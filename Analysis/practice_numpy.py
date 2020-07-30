@@ -4,6 +4,8 @@ import numpy as np
 '''
 NumPy: 数组和矢量计算
 ndarray,一个具有矢量算术运算和复杂广播能力的快速且节约空间的多维数组
+three   通用函数
+four    利用数组进行数据处理
 '''
 
 
@@ -67,7 +69,6 @@ def practice_one(d: list):
     a[0, [True,False,False,True]]
     a[(a >=3) & (a < 10)]
 
-
     pass
 
 
@@ -97,7 +98,9 @@ def practice_two():
     a.astype(np.float64)    # 转换数组
 
     a ** 0.5                # 表示数组的0.5次幂
-    # 不同大小的数组之间的运算教做广播
+
+    # 不同大小的数组之间的运算叫做广播
+
     a[0, 2].copy()          # 对数组进行复制
     arr1 = np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])
     arr1[0] = 42            # arr1[0]全为42
@@ -107,7 +110,6 @@ def practice_two():
     a.transpose((1,0,2))    # 由轴编号组成的元组才能对这些轴进行转置
     a.swapaxes(1,2)         # 接受一对轴编号
 
-
     pass
 
 
@@ -115,7 +117,151 @@ def practice_three():
     a = np.arange(12).reshape(3, 4)
     np.sqrt(a)              # 简单的元素级变体，一元
     np.exp(a)               # 简单的元素级变体，一元
-    np.add()                # 二元
-    np.maximum()            # 二元
+    np.add(a, a)                # 二元
+    np.maximum(a, a)            # 二元
+    arr = np.random.randn(7) * 5
+    np.modf(arr)            # 返回小数部分与整数部分
+    '''
+    一元ufunc     返回一维数组
+        abs,fabs            # 计算整数、浮点数或复数的绝对值；对于非复数值可使用fabs更快
+        sqrt                # 计算各元素的平方根，同arr ** 0.5
+        square              # 各元素的平方，同arr ** 2
+        exp                 # 各元素的指数
+        log,log10,log2,log1p    # 自然对数，底数为10的log，底数为2的log，log（1+x） 
+        sign                # 各元素的正负号：1正数，0零，-1负数
+        ceil                # 各元素的ceiling值，即大于等于该值的最小整数
+        floor               # 各元素的floor值，即小于等于该值的最大整数
+        rint                # 将各元素值四舍五入到最接近的整数，保留dtype
+        modf                # 返回数组的小数与整数部分
+        isnan               # 检测是否为空值
+        isfinite,isinf      # 检测元素是否为无穷
+        cos,cosh,sin,sinh   # 普通型和双曲型三角函数
+        tan,tanh
+        arccos,arccosh,arcsin   # 反三角函数
+        arcsnh,arctan,arctanh
+        logical_not         # 计算各元素not x的真值，相当于-arr
+    
+    二元ufunc     返回二维数组
+        add                 # 将数组中对应的元素相加
+        subtract            # 从第一个数组中减去第二个数组中元素
+        multiply            # 相乘
+        divide,floor_divide # 除法或向下圆整除法（丢弃余数）
+        power               # 第一个数组中的元素A，第二个数组中的元素B，记为A的B次幂
+        maximum,fmax        # 最大值，fmax将忽略NaN
+        minimum,fmin        # 最小值，fmin将忽略NaN
+        mod                 # 求模计算（除数的余数）
+        copysign            # 将第二个数组中的值的符号复制给第一个数组中的值
+        greater,greater_equal   # 相当于，>、>=、<、<=、==、!=
+        less,less_equal,equal,not_equal
+        logical_and,logical_or,logical_xor  # 相当于，&、|、^
+    '''
 
     pass
+
+
+def practice_four():
+    # 假设在一组值上计算函数sqrt(x^2 + y^2)；
+    # np.meshgrid函数接受两个一维数组，并产生两个二维矩阵。
+    points = np.arange(-5, 5, 0.01)         # 1000个间隔相同的点
+    xs, ys = np.meshgrid(points, points)    # 由两个一维数组，产生两个二维数组
+    z = np.sqrt(xs ** 2 + ys ** 2)          # 计算sqrt(x^2 + y^2)
+    import matplotlib.pyplot as plt         # 导入matplotlib.pyplot
+    plt.imshow(z, cmap=plt.cm.gray)         # 使用自定义的colormap（灰度图）;还有plt.cm.cool，plt.cm.hot和默认
+    plt.colorbar()                          # 颜色刻度
+    plt.title("Image plot of $\sqrt{x^2 + y^2}$ for a grid of values")
+    # plt.show()                              # 展示
+
+    xa = np.array([1.1, 1.2, 1.3, 1.4, 1.5])
+    ya = np.array([2.1, 2.2, 2.3, 2.4, 2.5])
+    cond = np.array([True, False, True, True, False])       # 赋值
+    result = [(x if c else y) for x, y, c in zip(xa, ya, cond)]
+    result2 = np.where(cond, xa, ya)        # 同上等价；满足cond则xa，不满足则ya
+    # print(result, result2)
+
+    arr = np.random.randn(4, 4)         # 4行4列的二维正态分布数组
+    np.where(arr > 0, 2, -2)            # 满足arr>0则2，不满足则-2
+    np.where(arr > 0, 2, arr)           # 不限于数组，可为其他
+    '''
+    若如下：
+        result = []
+        for i in rang(n):
+            if cond1[i] and cond2[i]:
+                result.append(0)
+            elif cond1[i]:
+                result.append(1)
+            elif cond2[i]:
+                result.append(2)
+            else:
+                result.append(3)
+    可等价于：
+        np.where(cond1 & cond2, 0,
+                    np.where(cond1, 1,
+                                np.where(cond2, 2, 3)))
+    还可以等价于：
+        result = 1 * (cond1 - cond2) + 2 * (cond2 & -cond1) + 3 * -(cond1 | cond2)
+    '''
+    arr = np.random.randn(5, 4)         # 正态分布
+    arr.mean()                          # 求均值
+    np.mean(arr)                        # 同上
+    arr.sum()                           # 求和;np.sum(arr)
+    arr.mean(axis=1)                    # 每一行的均值；axis=0每一列的均值
+    arr.sum(0)                          # 每列的和；1每行的和；可写成axis=
+    arr = np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8]])
+    '''cumsum
+    0:实现0轴上的累加：以最外面的数组元素为单位，以[[0,1,2]]为开始实现后面元素的对应累加
+    1:实现1轴上的累加：以次外层数组元素为单位，实现后面元素的对应累加
+    2:实现2轴上的累加：以次次外层的数组元素为累加单位，即1为开始，实现后面的元素累加
+    …………
+    n:实现2轴上的累加：以最里面的元素为累加单位，实现后面的元素累加
+    '''
+    arr.cumsum(0)
+    arr.cumprod(1)      # 积
+    '''
+    基本数组统计方法：
+        sum             # 和
+        mean            # 算术平均数
+        std,var         # 标准差和方差
+        min,max         # 最小，最大
+        argmin,argmax   # 最小索引，最大索引
+        cumsum          # 所有元素的累计和
+        cumprod         # 所有元素的累计积
+    '''
+
+    arr = np.random.randn(100)
+    (arr > 0).sum()     # 正数的数量
+    bools = np.array([False, False, True, False])
+    bools.any()         # 测试数组中是否存在一个或多个True
+    bools.all()         # 检查数组中所有值是否都是True
+
+    arr = np.random.randn(8)
+    arr.sort()          # 排序，小到大
+    arr = np.random.randn(5, 3)
+    arr.sort(1)         # 行排序；0列排序
+
+    large_arr = np.random.randn(1000)
+    large_arr.sort()
+    v = large_arr[int(0.05 * len(large_arr))]   # 5%分位数
+
+    names = np.array(['Bob', 'Joe', 'Will', 'Joe', 'Joe'])
+    np.unique(names)        # 集合
+    ints = np.array([3, 3, 3, 2, 2, 1, 1, 4, 4])
+    np.unique(ints)         # 集合
+
+    values = np.array([6, 0, 0, 3, 2, 5, 6])
+    np.in1d(values, [2, 3, 6])      # 测试一个数组中的值在另一个数组中的成员资格，返回布尔型数组
+    '''
+    数组的集合运算：
+        unique(x)
+        intersect1d(x, y)
+        union1d(x, y)
+        in1d(x, y)
+        setdiff1d(x, y)
+        setxor1d(x, y)
+    '''
+
+    pass
+
+
+if __name__ == '__main__':
+    practice_four()
+
