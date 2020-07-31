@@ -6,6 +6,8 @@ NumPy: 数组和矢量计算
 ndarray,一个具有矢量算术运算和复杂广播能力的快速且节约空间的多维数组
 three   通用函数
 four    利用数组进行数据处理
+five    用于文件输入输出
+six     线性代数
 '''
 
 
@@ -251,17 +253,86 @@ def practice_four():
     np.in1d(values, [2, 3, 6])      # 测试一个数组中的值在另一个数组中的成员资格，返回布尔型数组
     '''
     数组的集合运算：
-        unique(x)
-        intersect1d(x, y)
-        union1d(x, y)
-        in1d(x, y)
-        setdiff1d(x, y)
-        setxor1d(x, y)
+        unique(x)           # 计算x中的唯一元素，返回有序结果
+        intersect1d(x, y)   # 计算x，y中的公共元素，返回有序结果
+        union1d(x, y)       # 计算x，y的并集，返回有序结果
+        in1d(x, y)          # 得到一个表示“x的元素是否包含于y”的布尔型数组
+        setdiff1d(x, y)     # 集合的差，在x中且不在y中
+        setxor1d(x, y)      # 集合的对称差，存在于一个数组中但不同时存在于两个数组中
+    '''
+
+    pass
+
+
+def practice_five():
+    arr = np.arange(10)
+    np.save('some_array', arr)      # 以原始的二进制格式保存，没有扩展名则自动加上.npy
+    np.load('some_array.npy')           # 读取文件
+    np.savez('array_archive.npz', a=arr, b=arr)   # 以关键字参数的形式传入多个数组
+    arch = np.load('array_archive.npz')    # 读取文件
+    print(arch['a'])           # arch['a']根据关键字显示内容
+
+    # !type array_ex.txt        在Windows中查看array_ex.txt文件
+    np.loadtxt('array_ex.txt', delimiter=',')   # 以，为分隔点，构成数组;txt文件
+    np.savetxt()        # 相反的操作，将数组转换为以某种分隔符隔开的文本文件
+
+    pass
+
+
+def practice_six():
+    x = np.array([[1., 2., 3.], [4., 5., 6.]])
+    y = np.array([[6., 23.], [-1, 7], [8, 9]])
+    x.dot(y)        # == np.dot(x, y)   乘法==x的每行分别乘以y的每列
+    np.dot(x, np.ones(3))       # np.ones(3)一维数组
+
+    from numpy.linalg import inv, qr
+    X = np.random.randn(5, 5)
+    mat = X.T.dot(X)        # X.T为X的转置
+    inv(mat)                # inv求逆矩阵
+    mat.dot(inv(mat))       # 矩阵与逆矩阵之积为单位矩阵
+    q, r = qr(mat)          # QR分解
+    '''
+    numpy.linalg函数
+        diag        # 以一维数组的形式返回方阵的对角线；或将一维数组转换为方阵
+        dot         # 矩阵乘法
+        trace       # 对角线元素的和
+        det         # 矩阵行列式
+        eig         # 方阵的本征值和本征向量
+        inv         # 方阵的逆
+        pinv        # 矩阵的Moore-Penrose伪逆
+        qr          # QR分解
+        svd         # 奇异值分解
+        solve       # 解Ax=b
+        lstsq       # Ax=b的最小二乘解
+    '''
+
+    pass
+
+
+def practice_seven():
+    np.random.normal(size=(4, 4))       # 标准正态分布的4*4样本数组
+    from random import normalvariate
+    '''
+    numpy.random函数
+        seed        # 随机数生成器的种子
+        permutation # 返回一个序列的随机排列或随机排列的范围
+        shuffle     # 对一个序列就地随机排列
+        rand        # 产生均匀分布的样本值
+        randint     # 给定范围内随机选取整数
+        randn       # 正态分布的样本值
+        binomial    # 二项分布的样本值
+        normal      # 高斯分布的样本值
+        beta        # Beta分布的样本值
+        chisquare   # 卡方分布的样本值
+        gamma       # Gamma分布的样本值
+        uniform     # [0,1)中均匀分布的样本值
     '''
 
     pass
 
 
 if __name__ == '__main__':
-    practice_four()
+    # practice_four()
+
+    pass
 
