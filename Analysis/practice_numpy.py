@@ -8,6 +8,7 @@ three   通用函数
 four    利用数组进行数据处理
 five    用于文件输入输出
 six     线性代数
+seven   样本值
 '''
 
 
