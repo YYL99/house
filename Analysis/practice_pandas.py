@@ -8,6 +8,8 @@ import numpy as np
 one     pandas的数据结构
 two     基本功能
 three   汇总和计算描述统计
+four    处理缺失数据
+five    层次化索引
 '''
 
 
@@ -204,6 +206,126 @@ def practice_three():
     skipna      排除缺失值
     level       分组约简
     '''
+    df.idxmax()         # .idxmax()，.idxmin()间接统计，达到最小值或最大值的索引
+    df.cumsum()         # 累计型
+    df.describe()       # 用于一次性产生多个汇总统计
+    '''
+    描述和汇总统计
+        count           非NA值得数量
+        describe        针对Series或各DataFrame列计算汇总统计
+        min,max         计算最大值最小值
+        argmin,argmax   计算最大值最小值的索引位置
+        idxmin,idxmax   计算最大值最小值的索引值
+        quantile        计算样本的分位数（0到1）
+        sum             值的和
+        mean            值的平均数
+        median          值的算术中位数（50%分位数）
+        mad             根据平均值计算平均绝对离差
+        var             样本值的方差
+        std             样本值的标准差
+        skew            样本值的偏度（三阶矩）
+        kurt            样本值的峰度（四阶矩）
+        cumsum          样本值的累计和
+        cummin,cummax   样本值的累计最大值和累计最小值
+        cumprod         样本值的累计积
+        diff            计算一阶差分（对时间序列很有用）
+        pct_change      计算百分数变化
+    '''
+
+    # 相关系数与协方差
+    '''
+    .tail()
+    .corr()
+    .cov()
+    .corrwith()
+    '''
+
+    # 唯一值、值计数以及成员资格
+    obj = Series(['c', 'a', 'd', 'a', 'a', 'b', 'b','c', 'c'])
+    obj.unique()        # 得到唯一值
+    obj.value_counts()      # 计算各值出现的频率
+    pd.value_counts(obj.values, sort=False)     # 同上，可用于数组或序列
+    obj.isin(['b', 'c'])        # 判断矢量化集合的成员资格
 
     pass
+
+
+def practice_four():
+    string_data = Series(['aa', 'ar', np.nan, 'av'])
+    string_data.isnull      # 判断是否为NA
+    string_data[0] = None
+    string_data.isnull()    # 内置的None值也会当作NA处理
+    '''
+    NA处理方法
+        dropna      根据各标签的值中是否存在缺失数据对轴标签进行过滤
+        fillna      用指定值或插值方法（ffill或bfill）填充缺失数据
+        isnull      返回一个布尔值的对象，表明哪些值是缺失值NA
+        notnull     isnull的否定式
+    '''
+
+    # 滤除缺失数据
+    from numpy import nan as NA
+    data = Series([1, NA, 3.5, NA, 7])
+    data.dropna()       # 返回一个仅含非空数据和索引值的Series
+    data[data.notnull()]    # 同上
+    data = DataFrame([[1., 6.5, 3.], [1., NA, NA],
+                      [NA, NA, NA], [NA, 6.5, 3.]])
+    data.dropna()       # 默认丢弃任何含有缺失值的行
+    data.dropna(how='all')  # 只丢弃全为NA的那些行
+    data.dropna(axis=1, how='all')  # 只丢弃全为NA的那些列
+    df = DataFrame(np.random.randn(7, 3))
+    df.ix[:4, 1] = NA
+    df.ix[:2, 2] = NA
+    df.dropna(thresh=3)
+
+    # 填充缺失数据
+    df.fillna(0)        # 填充为0
+    df.fillna({1: 0.5, 3: -1})      # 可以实现对不同的列填充不同的值
+    df.fillna(0, inplace=True)      # 返回被填充对象的引用
+    '''
+    fillna函数的参数
+        value       填充缺失值的标量值或字典对象
+        method      插值方式
+        axis        默认为0
+        inplace     修改调用者对象而不产生副本
+        limit       可以连续填充的最大数量
+    '''
+
+    pass
+
+
+def practice_five():
+    data = Series(np.randomrandn(10),
+                  index=[['a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'd', 'd'],
+                         [1, 2, 3, 1, 2, 3, 1, 2, 2, 3]])
+    data.index
+    data['b']
+    data['b':'c']
+    data.ix[['b', 'd']]
+    data[:, 2]
+    data.unstack()
+    data.unstack().stack()
+
+    # 重排分级顺序
+    frame = DataFrame(np.arange(12).reshape((4, 3)),
+                      index=[['a', 'a', 'b' ,'b'], [1, 2, 1, 2]],
+                      columns=[['O', 'O', 'C'],
+                               ['G', 'R', 'G']])
+    frame.index.names = ['key1', 'key2']
+    frame.columns.names = ['state', 'color']
+    frame.swaplevel('key1', 'key2')
+    frame.sortlevel(1)
+    frame.swaplevel(0, 1).sortlevel(0)
+
+    # 根据级别汇总统计
+    frame.sum(level='key2')
+    frame.sum(level='color', axis=1)
+
+    pass
+
+'''
+其他
+    整数索引
+    面板数据
+'''
 
